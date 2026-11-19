@@ -1,0 +1,33 @@
+# Local development: `npm run db:up` starts only the database.
+# Self-hosting: set POSTGRES_PASSWORD in .env, then `docker compose up -d --build` runs both (see docs/DEPLOY.md).
+services:
+  db:
+    image: postgres:17-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: faahem
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-faahem_dev}
+      POSTGRES_DB: faahem
+    ports:
+      - "127.0.0.1:5544:5432"
+    volumes:
+      - faahem-db:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U faahem -d faahem"]
+      interval: 5s
+      retries: 10
+
+  app:
+    build: .
+    profiles: ["app"]
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgres://faahem:${POSTGRES_PASSWORD:-faahem_dev}@db:5432/faahem
+    ports:
+      - "3000:3000"
+
+volumes:
+  faahem-db:
