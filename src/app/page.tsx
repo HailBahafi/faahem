@@ -8,7 +8,7 @@ const STEPS = [
   ["توقّع", "تخمّن النتيجة قبل أن تراها"],
   ["الكود", "نفس الفكرة بست لغات"],
   ["طبّق", "رتّب، أكمل، أصلح، ثم اكتب"],
-  ["اختبر", "أسئلة تتبّع، لا أسئلة حفظ"],
+  ["اختبر", "أسئلة تتبّع تقيس فهمك"],
 ];
 
 const LANGS = ["JavaScript", "TypeScript", "Python", "Go", "Dart", "Rust"];
@@ -24,10 +24,10 @@ export default function Home() {
           <h1 className="mt-5 text-4xl font-bold leading-[1.25] md:text-6xl">
             افهم البرمجة،
             <br />
-            <span className="text-accent">لا تحفظها.</span>
+            <span className="text-accent">وشاهدها تعمل.</span>
           </h1>
           <p className="mt-5 max-w-md text-lg leading-8 text-muted">
-            كل سطر تكتبه تراه وهو يتحرك داخل الذاكرة. عندما ترى ما يفعله الجهاز، لن تحتاج إلى حفظ شيء.
+            كل سطر تكتبه تراه وهو يتحرك داخل الذاكرة. عندما ترى ما يفعله الجهاز، يصبح كل سطر منطقياً، وتكتب الكود بنفسك بثقة.
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
             <Link href="/learn/bits" className="rounded-2xl bg-accent px-6 py-3.5 text-lg font-bold text-accent-fg shadow-lg shadow-accent/25 hover:opacity-90">

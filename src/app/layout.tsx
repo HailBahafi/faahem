@@ -12,7 +12,7 @@ const arabic = IBM_Plex_Sans_Arabic({
 const code = JetBrains_Mono({ subsets: ["latin"], variable: "--font-code" });
 
 export const metadata: Metadata = {
-  title: "فاهم — افهم البرمجة، لا تحفظها",
+  title: "فاهم — شاهد الكود يعمل، وافهم لماذا",
   description: "تعلّم الفل ستاك بالرسوم المتحركة: شاهد ما يحدث داخل الجهاز وهو ينفّذ كودك.",
 };
 
