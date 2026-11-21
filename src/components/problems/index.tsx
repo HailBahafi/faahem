@@ -2,7 +2,7 @@
 import dynamic from "next/dynamic";
 import type { ComponentType } from "react";
 
-// Each demo loads only when its lesson opens, so a lesson page doesn't ship all 148 of them.
+// Each demo loads only when its lesson opens, so a lesson page doesn't ship all 158 of them.
 const load = (f: () => Promise<{ default: ComponentType }>) =>
   dynamic(f, { loading: () => <div className="h-64 animate-pulse rounded-2xl bg-surface-2" /> });
 
@@ -99,6 +99,11 @@ export const PROBLEMS: Record<string, ComponentType> = {
   jsFunctional: load(() => import("./JsFunctionalProblem")),
   jsPatterns: load(() => import("./JsPatternsProblem")),
   jsStreams: load(() => import("./JsStreamsProblem")),
+  jsTooling: load(() => import("./JsToolingProblem")),
+  jsNodeInternals: load(() => import("./JsNodeInternalsProblem")),
+  jsSecurity: load(() => import("./JsSecurityProblem")),
+  jsPerformance: load(() => import("./JsPerformanceProblem")),
+  jsArchitecture: load(() => import("./JsArchitectureProblem")),
   tsAnnotations: load(() => import("./TsAnnotationsProblem")),
   tsObjects: load(() => import("./TsObjectsProblem")),
   tsUnions: load(() => import("./TsUnionsProblem")),
@@ -118,6 +123,11 @@ export const PROBLEMS: Record<string, ComponentType> = {
   tsInfer: load(() => import("./TsInferProblem")),
   tsBranded: load(() => import("./TsBrandedProblem")),
   tsDecorators: load(() => import("./TsDecoratorsProblem")),
+  tsStrict: load(() => import("./TsStrictProblem")),
+  tsLibraryTypes: load(() => import("./TsLibraryTypesProblem")),
+  tsRuntimeValidation: load(() => import("./TsRuntimeValidationProblem")),
+  tsMigration: load(() => import("./TsMigrationProblem")),
+  tsMonorepo: load(() => import("./TsMonorepoProblem")),
   pyNames: load(() => import("./PyNamesProblem")),
   pyTypes: load(() => import("./PyTypesProblem")),
   pyOperators: load(() => import("./PyOperatorsProblem")),

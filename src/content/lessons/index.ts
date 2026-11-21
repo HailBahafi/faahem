@@ -53,6 +53,7 @@ import { http } from "./http";
 import { ifLesson } from "./if";
 import { indexes } from "./indexes";
 import { internet } from "./internet";
+import { jsArchitecture } from "./js-architecture";
 import { jsArrayMethods } from "./js-array-methods";
 import { jsClasses } from "./js-classes";
 import { jsClosures } from "./js-closures";
@@ -62,13 +63,17 @@ import { jsIterators } from "./js-iterators";
 import { jsMapSet } from "./js-map-set";
 import { jsMemory } from "./js-memory";
 import { jsModules } from "./js-modules";
+import { jsNodeInternals } from "./js-node-internals";
 import { jsPatterns } from "./js-patterns";
+import { jsPerformance } from "./js-performance";
 import { jsPromisesInside } from "./js-promises-inside";
 import { jsPrototypes } from "./js-prototypes";
 import { jsProxy } from "./js-proxy";
 import { jsRegex } from "./js-regex";
+import { jsSecurity } from "./js-security";
 import { jsStreams } from "./js-streams";
 import { jsThis } from "./js-this";
+import { jsTooling } from "./js-tooling";
 import { linkedList } from "./linked-list";
 import { linux } from "./linux";
 import { monitoring } from "./monitoring";
@@ -136,9 +141,14 @@ import { tsFunctions } from "./ts-functions";
 import { tsGenerics } from "./ts-generics";
 import { tsGuards } from "./ts-guards";
 import { tsInfer } from "./ts-infer";
+import { tsLibraryTypes } from "./ts-library-types";
 import { tsLiterals } from "./ts-literals";
 import { tsMapped } from "./ts-mapped";
+import { tsMigration } from "./ts-migration";
+import { tsMonorepo } from "./ts-monorepo";
 import { tsObjects } from "./ts-objects";
+import { tsRuntimeValidation } from "./ts-runtime-validation";
+import { tsStrict } from "./ts-strict";
 import { tsTemplateLiteral } from "./ts-template-literal";
 import { tsUnions } from "./ts-unions";
 import { tsUtility } from "./ts-utility";
@@ -151,5 +161,5 @@ import { widgets } from "./widgets";
 
 /** Every published lesson, in roadmap order. */
 export const lessons: Record<string, Lesson> = Object.fromEntries(
-  [bits, ram, cpu, codeToRun, variables, types, operators, ifLesson, switchLesson, whileLesson, forLesson, functions, scope, arrays, strings, objects, references, recursion, errors, decompose, tracing, debugging, arrayDs, linkedList, stack, queue, hash, tree, graph, sorting, searching, bigO, terminal, git, packages, internet, dns, http, browser, html, boxModel, flexGrid, dom, events, eventLoop, asyncLesson, typescript, react, rest, nodeServer, goServer, pythonServer, auth, validation, sql, relations, indexes, transactions, redis, dart, widgets, state, flutterApi, stackHeap, ownership, borrowing, concurrency, linux, docker, ciCd, monitoring, testing, cleanCode, security, systemDesign, jsClosures, jsThis, jsPrototypes, jsClasses, jsModules, jsArrayMethods, jsDestructuring, jsMapSet, jsIterators, jsRegex, jsPromisesInside, jsMemory, jsProxy, jsFunctional, jsPatterns, jsStreams, tsAnnotations, tsObjects, tsUnions, tsFunctions, tsArrays, tsLiterals, tsConfig, tsGenerics, tsUtility, tsClasses, tsGuards, tsDiscriminated, tsDeclarations, tsConditional, tsMapped, tsTemplateLiteral, tsInfer, tsBranded, tsDecorators, pyNames, pyTypes, pyOperators, pyIf, pyLoops, pyFunctions, pyLists, pyTuples, pyDicts, pySets, pyStrings, pyErrors, pyFiles, goTool, goVariables, goTypes, goControl, goFunctions, goSlices, goMaps, goStrings, goStructs, goPointers, rsCargo, rsVariables, rsTypes, rsFunctions, rsSlices, rsStructs, rsEnums, rsOptionResult, dartNullSafety, dartTypes, dartControl, dartFunctions, dartCollections, dartStrings, dartClasses].map((l) => [l.slug, l]),
+  [bits, ram, cpu, codeToRun, variables, types, operators, ifLesson, switchLesson, whileLesson, forLesson, functions, scope, arrays, strings, objects, references, recursion, errors, decompose, tracing, debugging, arrayDs, linkedList, stack, queue, hash, tree, graph, sorting, searching, bigO, terminal, git, packages, internet, dns, http, browser, html, boxModel, flexGrid, dom, events, eventLoop, asyncLesson, typescript, react, rest, nodeServer, goServer, pythonServer, auth, validation, sql, relations, indexes, transactions, redis, dart, widgets, state, flutterApi, stackHeap, ownership, borrowing, concurrency, linux, docker, ciCd, monitoring, testing, cleanCode, security, systemDesign, jsClosures, jsThis, jsPrototypes, jsClasses, jsModules, jsArrayMethods, jsDestructuring, jsMapSet, jsIterators, jsRegex, jsPromisesInside, jsMemory, jsProxy, jsFunctional, jsPatterns, jsStreams, jsTooling, jsNodeInternals, jsSecurity, jsPerformance, jsArchitecture, tsAnnotations, tsObjects, tsUnions, tsFunctions, tsArrays, tsLiterals, tsConfig, tsGenerics, tsUtility, tsClasses, tsGuards, tsDiscriminated, tsDeclarations, tsConditional, tsMapped, tsTemplateLiteral, tsInfer, tsBranded, tsDecorators, tsStrict, tsLibraryTypes, tsRuntimeValidation, tsMigration, tsMonorepo, pyNames, pyTypes, pyOperators, pyIf, pyLoops, pyFunctions, pyLists, pyTuples, pyDicts, pySets, pyStrings, pyErrors, pyFiles, goTool, goVariables, goTypes, goControl, goFunctions, goSlices, goMaps, goStrings, goStructs, goPointers, rsCargo, rsVariables, rsTypes, rsFunctions, rsSlices, rsStructs, rsEnums, rsOptionResult, dartNullSafety, dartTypes, dartControl, dartFunctions, dartCollections, dartStrings, dartClasses].map((l) => [l.slug, l]),
 );
