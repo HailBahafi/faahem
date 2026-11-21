@@ -74,3 +74,9 @@ test("errors are explained in Arabic", () => {
   assert.ok(last(r).error);
   assert.equal(last(r).line, 2);
 });
+
+test("for-let gives each iteration its own binding; arr[i]() calls; method on undefined", () => {
+  const r = trace("const fs = [];\nfor (let i = 0; i < 3; i++) {\n  fs.push(function () { return i; });\n}\nconsole.log(fs[0](), fs[1](), fs[2]());");
+  assert.deepEqual(last(r).output, ["0 1 2"]);
+  assert.match(trace("let u;\nu.trim();").error ?? last(trace("let u;\nu.trim();")).error ?? "", /TypeError|Cannot read/);
+});

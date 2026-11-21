@@ -366,6 +366,13 @@ class Interp {
               if (!t) break;
             }
             if (this.loopBody(n.body) === "break") break;
+            // `for (let ...)`: each iteration gets its own copy of the loop variables, so closures
+            // made in one iteration keep that iteration's value (as JavaScript does).
+            if (n.init?.type === "VariableDeclaration" && n.init.kind !== "var") {
+              const f = this.top, old = f.cur, fresh = new Scope(old.parent);
+              for (const [k, b] of old.vars) fresh.vars.set(k, { ...b });
+              f.cur = fresh;
+            }
             if (n.update) {
               const v = this.eval(n.update);
               this.record(line, this.describe(n.update, v));
@@ -713,7 +720,9 @@ class Interp {
     if (c.type === "MemberExpression") {
       const obj = this.eval(c.object);
       const m = c.computed ? String(this.propKey(c)) : c.property.name;
-      const fnVal = obj instanceof Ref && this.heap.get(obj.id)!.kind === "object" ? (this.heap.get(obj.id) as any).props.get(m) : undefined;
+      const h = obj instanceof Ref ? (this.heap.get(obj.id) as any) : undefined;
+      // obj.f() or obj["f"]() on an object, and arr[i]() on an array of functions.
+      const fnVal = h?.kind === "object" ? h.props.get(m) : h?.kind === "array" && /^\d+$/.test(m) ? h.items[Number(m)] : undefined;
       if (fnVal instanceof Ref) return this.invoke(fnVal, this.args(n), `${this.text(c.object)}.${m}`);
       return this.method(obj, m, this.args(n));
     }

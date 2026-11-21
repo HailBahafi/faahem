@@ -1,3 +1,4 @@
+import { runJsAsync } from "./jsrun.mjs";
 // Validates stage projects: node scripts/check-projects.mjs
 // The solution must pass every test; the starter must fail at least one (or the project teaches nothing).
 import { NATIVE, runNative, SKIP_NATIVE } from "./native.mjs";
@@ -11,16 +12,7 @@ import { runPython } from "./python.mjs";
 
 const fmt = (v) => (typeof v === "string" ? v : v === undefined ? "undefined" : JSON.stringify(v));
 
-function runJs(code) {
-  const out = [];
-  const log = (...a) => out.push(a.map(fmt).join(" "));
-  try {
-    vm.runInNewContext(`(function(){${code}\n})()`, { console: { log, info: log, warn: log, error: log } }, { timeout: 2000 });
-    return { out };
-  } catch (e) {
-    return { out, error: `${e.name}: ${e.message}` };
-  }
-}
+const runJs = (code) => runJsAsync(code);
 
 async function runHtml(html, check) {
   const vc = new VirtualConsole();
@@ -48,7 +40,7 @@ async function runTest(p, code, test) {
     r = { out: x.out.split("\n"), error: x.error };
   }
   else if (p.lang === "sql") r = await runSqlWith(PGlite, `${code}\n${test.code}`, p.setup);
-  else r = runJs(p.lang === "ts" ? transform(`${code}\n${test.code}`, { transforms: ["typescript"], disableESTransforms: true }).code : `${code}\n${test.code}`);
+  else r = await runJs(p.lang === "ts" ? transform(`${code}\n${test.code}`, { transforms: ["typescript"], disableESTransforms: true }).code : `${code}\n${test.code}`);
   const last = r.out.filter((l) => String(l).trim() !== "").pop();
   return { pass: !r.error && String(last).trim().toLowerCase() === "true", detail: r.error ? (r.error.message ?? r.error) : `last=${last}` };
 }

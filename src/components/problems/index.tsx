@@ -2,7 +2,7 @@
 import dynamic from "next/dynamic";
 import type { ComponentType } from "react";
 
-// Each demo loads only when its lesson opens, so a lesson page doesn't ship all 120 of them.
+// Each demo loads only when its lesson opens, so a lesson page doesn't ship all 148 of them.
 const load = (f: () => Promise<{ default: ComponentType }>) =>
   dynamic(f, { loading: () => <div className="h-64 animate-pulse rounded-2xl bg-surface-2" /> });
 
@@ -83,6 +83,22 @@ export const PROBLEMS: Record<string, ComponentType> = {
   cleanCode: load(() => import("./CleanCodeProblem")),
   security: load(() => import("./SecurityProblem")),
   systemDesign: load(() => import("./SystemDesignProblem")),
+  jsClosures: load(() => import("./JsClosuresProblem")),
+  jsThis: load(() => import("./JsThisProblem")),
+  jsPrototypes: load(() => import("./JsPrototypesProblem")),
+  jsClasses: load(() => import("./JsClassesProblem")),
+  jsModules: load(() => import("./JsModulesProblem")),
+  jsArrayMethods: load(() => import("./JsArrayMethodsProblem")),
+  jsDestructuring: load(() => import("./JsDestructuringProblem")),
+  jsMapSet: load(() => import("./JsMapSetProblem")),
+  jsIterators: load(() => import("./JsIteratorsProblem")),
+  jsRegex: load(() => import("./JsRegexProblem")),
+  jsPromisesInside: load(() => import("./JsPromisesInsideProblem")),
+  jsMemory: load(() => import("./JsMemoryProblem")),
+  jsProxy: load(() => import("./JsProxyProblem")),
+  jsFunctional: load(() => import("./JsFunctionalProblem")),
+  jsPatterns: load(() => import("./JsPatternsProblem")),
+  jsStreams: load(() => import("./JsStreamsProblem")),
   tsAnnotations: load(() => import("./TsAnnotationsProblem")),
   tsObjects: load(() => import("./TsObjectsProblem")),
   tsUnions: load(() => import("./TsUnionsProblem")),
@@ -90,6 +106,18 @@ export const PROBLEMS: Record<string, ComponentType> = {
   tsArrays: load(() => import("./TsArraysProblem")),
   tsLiterals: load(() => import("./TsLiteralsProblem")),
   tsConfig: load(() => import("./TsConfigProblem")),
+  tsGenerics: load(() => import("./TsGenericsProblem")),
+  tsUtility: load(() => import("./TsUtilityProblem")),
+  tsClasses: load(() => import("./TsClassesProblem")),
+  tsGuards: load(() => import("./TsGuardsProblem")),
+  tsDiscriminated: load(() => import("./TsDiscriminatedProblem")),
+  tsDeclarations: load(() => import("./TsDeclarationsProblem")),
+  tsConditional: load(() => import("./TsConditionalProblem")),
+  tsMapped: load(() => import("./TsMappedProblem")),
+  tsTemplateLiteral: load(() => import("./TsTemplateLiteralProblem")),
+  tsInfer: load(() => import("./TsInferProblem")),
+  tsBranded: load(() => import("./TsBrandedProblem")),
+  tsDecorators: load(() => import("./TsDecoratorsProblem")),
   pyNames: load(() => import("./PyNamesProblem")),
   pyTypes: load(() => import("./PyTypesProblem")),
   pyOperators: load(() => import("./PyOperatorsProblem")),

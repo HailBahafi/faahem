@@ -1,3 +1,4 @@
+import { runJsAsync } from "./jsrun.mjs";
 // Validates lesson content: node scripts/check-lessons.mjs [slug ...]
 // Runs every exercise and example the way the browser would (JS in a VM, TypeScript after
 // stripping types, Python with the local interpreter, HTML in jsdom), and checks that each
@@ -22,15 +23,9 @@ const PROGRAMMING = ["js", "ts", "py", "go", "dart", "rust"];
 const fmt = (v) => (typeof v === "string" ? v : v === undefined ? "undefined" : JSON.stringify(v));
 const strip = (code) => transform(code, { transforms: ["typescript"], disableESTransforms: true }).code;
 
-function runJs(code) {
-  const out = [];
-  const log = (...a) => out.push(a.map(fmt).join(" "));
-  try {
-    vm.runInNewContext(`(function(){${code}\n})()`, { console: { log, info: log, warn: log, error: log } }, { timeout: 1000 });
-    return { out: out.join("\n").trim() };
-  } catch (e) {
-    return { out: out.join("\n").trim(), error: `${e.name}: ${e.message}` };
-  }
+async function runJs(code) {
+  const r = await runJsAsync(code);
+  return { out: r.out.join("\n").trim(), error: r.error };
 }
 
 async function runHtml(html, check = "__logs.join('\\n')") {
