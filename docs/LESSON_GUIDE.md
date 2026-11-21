@@ -97,12 +97,25 @@ Not every topic is a six-language program. The template adapts:
   `setup`. Output is a text table: a header line `col | col`, then one line per row (NULL for nulls), so
   `expected` is e.g. `"name | age\nSara | 20"`. Statements without rows print nothing. Use ORDER BY so rows
   come out in a fixed order.
-- **Go, Rust and Dart (and Flutter) do not run** (the owner's decision for now). Show real code in those
-  languages in scenes (hand-written steps) and predict/quiz, set `singleLanguage: true` when a lesson is
-  about one of them, make exercises `lang: "text"` (`order` / `fill`), and give the playground a JS or
-  Python *simulation* of the idea (`kind: "trace"`). The interactive demo carries the experience (e.g. a
-  borrow-checker game, a widget tree that rebuilds). Never write code in those languages into a runnable
-  field.
+- **Go, Rust and Dart run** (since 2026-11-21) on the run server (`/api/run`, Piston); the validator
+  runs them with the local toolchains (`scripts/native.mjs`). Use `code.runnerLang: "go" | "rust" | "dart"`
+  and exercises `lang: "go" | "rust" | "dart"`. Every runnable snippet is a **complete program** (Go:
+  `package main`, imports, `func main()`; Rust: `fn main()`; Dart: `void main()`), and Go code must compile
+  (no unused imports or variables). Their `fill` exercises must also set `answer` (the one correct option):
+  until the run server is live, the site checks order/fill against the answer and shows fix/write
+  solutions. Scenes in these languages are hand-written steps (no tracer), the playground is a JS or Python
+  `kind: "trace"` simulation of the idea, and predict/quiz show real code in the language.
+  Flutter widget code cannot run (it needs a device): Flutter lessons use Dart-only runnable parts
+  (models, state logic) and show widget code in scenes.
+- **Language tracks** (`src/content/tracks.ts`, `docs/TRACKS_PLAN.md`): a track lesson is about one
+  language: `singleLanguage: true`, slug with the track prefix (`py-`, `go-`, `rs-`, `ts-`, `dart-`, `js-`),
+  `stage: 0`, `number` "<level>.<n>" (e.g. "2.3"), `next` = the following lesson in the track. Every
+  station uses that language (JS/TS/Python: their tracer and runner; Go/Rust/Dart: see above). Higher levels
+  teach what professionals actually do and why, with real-world programs, not toy syntax. A track level's
+  project is `src/content/projects/<slug>.ts` with `stage: 0, track: "py", level: 1`. For Go/Rust/Dart
+  projects the learner writes functions/types **without `main`**; each test's `code` is a complete `main`
+  that calls them and prints `true` (Go: the learner's code starts with `package main` and its imports, and
+  the test may only use packages the learner imported, so the starter imports `fmt`).
 - **Backend lessons** (Node, Go, Python servers): simulate a server as a plain function
   `handle(request) → response` over objects, which traces well; Express/Flask/net/http code itself is
   shown in scenes, not run.

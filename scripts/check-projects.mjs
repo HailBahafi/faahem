@@ -1,5 +1,6 @@
 // Validates stage projects: node scripts/check-projects.mjs
 // The solution must pass every test; the starter must fail at least one (or the project teaches nothing).
+import { NATIVE, runNative, SKIP_NATIVE } from "./native.mjs";
 import { readdirSync } from "node:fs";
 import vm from "node:vm";
 import { PGlite } from "@electric-sql/pglite";
@@ -42,6 +43,10 @@ async function runTest(p, code, test) {
   let r;
   if (p.lang === "html") r = await runHtml(code, test.code);
   else if (p.lang === "py") r = runPython(`${code}\n${test.code}`);
+  else if (NATIVE.includes(p.lang)) {
+    const x = runNative(p.lang, `${code}\n${test.code}`);
+    r = { out: x.out.split("\n"), error: x.error };
+  }
   else if (p.lang === "sql") r = await runSqlWith(PGlite, `${code}\n${test.code}`, p.setup);
   else r = runJs(p.lang === "ts" ? transform(`${code}\n${test.code}`, { transforms: ["typescript"], disableESTransforms: true }).code : `${code}\n${test.code}`);
   const last = r.out.filter((l) => String(l).trim() !== "").pop();
@@ -54,6 +59,10 @@ for (const f of readdirSync("src/content/projects").filter((f) => f.endsWith(".t
   const p = Object.values(mod).find((v) => v && typeof v === "object" && v.slug && v.tests);
   const errs = [];
   if (!p) { console.log(`✖ ${f}: no exported Project`); failures++; continue; }
+  if (SKIP_NATIVE.includes(p.lang)) {
+    console.log(`- ${p.slug} (${p.lang}: runs in CI)`);
+    continue;
+  }
   if (p.lang === "text") {
     if (p.tests.length) errs.push("text projects have no tests (the learner ticks steps)");
   } else {

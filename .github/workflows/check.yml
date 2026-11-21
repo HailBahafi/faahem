@@ -1,0 +1,51 @@
+# Runs every lesson, exercise and project in its real language (JS/TS in Node, Python, SQL in PGlite,
+# HTML in jsdom, Go, Rust and Dart with their toolchains), plus types, lint and unit tests.
+# Windows Smart App Control blocks freshly built Go/Rust programs on the owner's PC, so this is where
+# they actually run.
+name: check
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: check-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: actions/setup-go@v5
+        with:
+          go-version: stable
+          cache: false
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: dart-lang/setup-dart@v1
+        with:
+          sdk: stable
+
+      - run: npm ci
+      - name: Registry is up to date
+        run: node scripts/gen-registry.mjs && git diff --exit-code -- src/content src/components/problems/index.tsx
+      - name: Types
+        run: npx tsc --noEmit -p .
+      - name: Lint
+        run: npx eslint src scripts --quiet
+      - name: Unit tests
+        run: npm test
+      - name: Lessons (every exercise runs in its language)
+        run: node scripts/check-lessons.mjs
+      - name: Projects (solution passes, starter fails)
+        run: node scripts/check-projects.mjs

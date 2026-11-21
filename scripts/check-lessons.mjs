@@ -2,6 +2,7 @@
 // Runs every exercise and example the way the browser would (JS in a VM, TypeScript after
 // stripping types, Python with the local interpreter, HTML in jsdom), and checks that each
 // scene's language versions line up with its steps.
+import { compileNative, NATIVE, runNative, SKIP_NATIVE } from "./native.mjs";
 import { readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import vm from "node:vm";
@@ -54,6 +55,7 @@ async function runHtml(html, check = "__logs.join('\\n')") {
 }
 
 async function run(lang, code, check, setup) {
+  if (NATIVE.includes(lang)) return runNative(lang, code);
   if (lang === "sql") {
     const r = await runSqlWith(PGlite, code, setup);
     return { out: r.out.join("\n").trim(), error: r.error ? r.error.message : undefined };
@@ -139,7 +141,10 @@ for (const f of files) {
 
   // Code station
   const rl = lesson.code.runnerLang ?? "js";
-  if (rl !== "text") {
+  if (SKIP_NATIVE.includes(rl)) {
+    const ce = compileNative(rl, lesson.code.runnerStarter);
+    if (ce) bad(`runnerStarter (${rl}) does not compile: ${ce}`);
+  } else if (rl !== "text") {
     const rs = await run(rl, lesson.code.runnerStarter, undefined, lesson.code.runnerSetup);
     if (rs.error) bad(`runnerStarter (${rl}) throws: ${rs.error}`);
   }
@@ -148,6 +153,14 @@ for (const f of files) {
   for (const [k, e] of lesson.exercises.entries()) {
     const tag = `exercise ${k + 1} (${e.kind}, ${e.lang ?? "js"})`;
     const lang = e.lang ?? "js";
+    if (SKIP_NATIVE.includes(lang)) {
+      // Windows: compile the correct program only; CI runs it and compares the output.
+      const good = e.kind === "order" ? e.lines.join("\n") : e.kind === "fill" ? e.template.replace("___", e.answer ?? e.options[0]) : e.solution;
+      const ce = compileNative(lang, good);
+      if (ce) bad(`${tag}: correct program does not compile: ${ce}`);
+      if (e.kind === "fill" && !e.options.includes(e.answer)) bad(`${tag}: ${lang} fill needs answer (one of the options)`);
+      continue;
+    }
     if (lang === "text") {
       if (e.kind === "fill" && !e.options.includes(e.answer)) bad(`${tag}: answer "${e.answer}" is not one of the options`);
       if (e.kind === "fix" || e.kind === "write") bad(`${tag}: text exercises can only be order or fill`);
@@ -164,6 +177,8 @@ for (const f of files) {
         if (!r.error && r.out === e.expected) good.push(o);
       }
       if (good.length !== 1) bad(`${tag}: ${good.length} options produce the expected output (${good.join(", ")})`);
+      // Go/Rust/Dart fill exercises are checked against `answer` when the run server is off.
+      if (NATIVE.includes(lang) && good.length === 1 && e.answer !== good[0]) bad(`${tag}: ${lang} fill needs answer: "${good[0]}"`);
     } else {
       const s = await run(lang, e.solution, e.check, e.setup);
       if (s.error || s.out !== e.expected) bad(`${tag}: solution gives ${JSON.stringify(s.out)} ${s.error ?? ""}, expected ${JSON.stringify(e.expected)}`);

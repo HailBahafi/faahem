@@ -3,17 +3,22 @@ import type { Project } from "@/lib/types";
 import { api } from "./api";
 import { calculator } from "./calculator";
 import { cliTool } from "./cli-tool";
+import { dartShoppingList } from "./dart-shopping-list";
 import { deploy } from "./deploy";
 import { firstRepo } from "./first-repo";
+import { goLogAnalyzer } from "./go-log-analyzer";
 import { graduation } from "./graduation";
 import { miniStore } from "./mini-store";
 import { pathFinder } from "./path-finder";
 import { problemSet } from "./problem-set";
+import { pyGradebook } from "./py-gradebook";
+import { rsCalculator } from "./rs-calculator";
 import { storeApp } from "./store-app";
 import { storeDb } from "./store-db";
+import { tsStoreModel } from "./ts-store-model";
 
 export const projects: Record<string, Project> = Object.fromEntries(
-  [api, calculator, cliTool, deploy, firstRepo, graduation, miniStore, pathFinder, problemSet, storeApp, storeDb].map((p) => [p.slug, p]),
+  [api, calculator, cliTool, dartShoppingList, deploy, firstRepo, goLogAnalyzer, graduation, miniStore, pathFinder, problemSet, pyGradebook, rsCalculator, storeApp, storeDb, tsStoreModel].map((p) => [p.slug, p]),
 );
 
 /** The project of each stage, by stage number. */

@@ -5,7 +5,7 @@ import { runPy, tracePy } from "./python/pyClient";
 import { explainError, runJs, type RunResult } from "./runJs";
 import { runSql } from "./sql";
 import { trace } from "./tracer/tracer.ts";
-import type { RunLang, Step } from "./types";
+import { isNative, type RunLang, type Step } from "./types";
 
 /** TypeScript → JavaScript by removing the types (what tsc does at runtime, minus checking). */
 export function stripTypes(code: string): string {
@@ -28,7 +28,29 @@ function explainPy(r: RunResult): string | null {
   return `${name}: ${message}`;
 }
 
+const NATIVE_NAME = { go: "Go", rust: "Rust", dart: "Dart" };
+
+/** Go, Rust and Dart compile and run on the run server. `Unavailable` means it isn't configured. */
+async function runNative(lang: "go" | "rust" | "dart", code: string): Promise<RunResult> {
+  try {
+    const r = await fetch("/api/run", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ lang, code }) });
+    const data = await r.json();
+    if (r.status === 503 || r.status === 502) return { out: [], error: { name: "Unavailable", message: `تشغيل ${NATIVE_NAME[lang]} على الموقع قريباً.` } };
+    if (r.status === 429) return { out: [], error: { name: "RateLimited", message: "تشغيلات كثيرة في دقيقة واحدة. انتظر قليلاً ثم جرّب." } };
+    if (!r.ok) return { out: [], error: { name: "Error", message: data.error ?? "تعذّر التشغيل." } };
+    return data as RunResult;
+  } catch {
+    return { out: [], error: { name: "Unavailable", message: "تعذّر الوصول إلى خادم التشغيل." } };
+  }
+}
+
 export function explain(lang: RunLang, r: RunResult) {
+  if (isNative(lang)) {
+    if (!r.error) return r.timedOut ? "استغرق البرنامج وقتاً طويلاً فأُوقف. هل هناك حلقة لا تنتهي؟" : null;
+    if (r.error.name === "CompileError") return `المترجم رفض الكود قبل أن يعمل:\n${r.error.message}`;
+    if (r.error.name === "RuntimeError") return `توقف البرنامج أثناء التشغيل:\n${r.error.message}`;
+    return r.error.message;
+  }
   return lang === "py" || lang === "sql" ? explainPy(r) : explainError(r);
 }
 
@@ -66,6 +88,7 @@ export async function runCode(lang: RunLang, code: string, check?: string, setup
   if (lang === "py") return runPy(code);
   if (lang === "sql") return runSql(code, setup);
   if (lang === "html") return runHtml(code, check);
+  if (isNative(lang)) return runNative(lang, code);
   if (lang === "ts") {
     try {
       return runJs(stripTypes(code));

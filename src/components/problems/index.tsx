@@ -2,7 +2,7 @@
 import dynamic from "next/dynamic";
 import type { ComponentType } from "react";
 
-// Each demo loads only when its lesson opens, so a lesson page doesn't ship all 75 of them.
+// Each demo loads only when its lesson opens, so a lesson page doesn't ship all 120 of them.
 const load = (f: () => Promise<{ default: ComponentType }>) =>
   dynamic(f, { loading: () => <div className="h-64 animate-pulse rounded-2xl bg-surface-2" /> });
 
@@ -83,4 +83,49 @@ export const PROBLEMS: Record<string, ComponentType> = {
   cleanCode: load(() => import("./CleanCodeProblem")),
   security: load(() => import("./SecurityProblem")),
   systemDesign: load(() => import("./SystemDesignProblem")),
+  tsAnnotations: load(() => import("./TsAnnotationsProblem")),
+  tsObjects: load(() => import("./TsObjectsProblem")),
+  tsUnions: load(() => import("./TsUnionsProblem")),
+  tsFunctions: load(() => import("./TsFunctionsProblem")),
+  tsArrays: load(() => import("./TsArraysProblem")),
+  tsLiterals: load(() => import("./TsLiteralsProblem")),
+  tsConfig: load(() => import("./TsConfigProblem")),
+  pyNames: load(() => import("./PyNamesProblem")),
+  pyTypes: load(() => import("./PyTypesProblem")),
+  pyOperators: load(() => import("./PyOperatorsProblem")),
+  pyIf: load(() => import("./PyIfProblem")),
+  pyLoops: load(() => import("./PyLoopsProblem")),
+  pyFunctions: load(() => import("./PyFunctionsProblem")),
+  pyLists: load(() => import("./PyListsProblem")),
+  pyTuples: load(() => import("./PyTuplesProblem")),
+  pyDicts: load(() => import("./PyDictsProblem")),
+  pySets: load(() => import("./PySetsProblem")),
+  pyStrings: load(() => import("./PyStringsProblem")),
+  pyErrors: load(() => import("./PyErrorsProblem")),
+  pyFiles: load(() => import("./PyFilesProblem")),
+  goTool: load(() => import("./GoToolProblem")),
+  goVariables: load(() => import("./GoVariablesProblem")),
+  goTypes: load(() => import("./GoTypesProblem")),
+  goControl: load(() => import("./GoControlProblem")),
+  goFunctions: load(() => import("./GoFunctionsProblem")),
+  goSlices: load(() => import("./GoSlicesProblem")),
+  goMaps: load(() => import("./GoMapsProblem")),
+  goStrings: load(() => import("./GoStringsProblem")),
+  goStructs: load(() => import("./GoStructsProblem")),
+  goPointers: load(() => import("./GoPointersProblem")),
+  rsCargo: load(() => import("./RsCargoProblem")),
+  rsVariables: load(() => import("./RsVariablesProblem")),
+  rsTypes: load(() => import("./RsTypesProblem")),
+  rsFunctions: load(() => import("./RsFunctionsProblem")),
+  rsSlices: load(() => import("./RsSlicesProblem")),
+  rsStructs: load(() => import("./RsStructsProblem")),
+  rsEnums: load(() => import("./RsEnumsProblem")),
+  rsOptionResult: load(() => import("./RsOptionResultProblem")),
+  dartNullSafety: load(() => import("./DartNullSafetyProblem")),
+  dartTypes: load(() => import("./DartTypesProblem")),
+  dartControl: load(() => import("./DartControlProblem")),
+  dartFunctions: load(() => import("./DartFunctionsProblem")),
+  dartCollections: load(() => import("./DartCollectionsProblem")),
+  dartStrings: load(() => import("./DartStringsProblem")),
+  dartClasses: load(() => import("./DartClassesProblem")),
 };

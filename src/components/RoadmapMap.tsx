@@ -5,12 +5,12 @@ import { motion } from "motion/react";
 import { PUBLISHED_LESSONS, STAGE_PROJECTS } from "@/content/published";
 import { stageComplete } from "./CertificateView";
 import { projectKey } from "./ProjectView";
-import { stages } from "@/content/roadmap";
+import { stages as roadmapStages, type Stage } from "@/content/roadmap";
 import { useProgress } from "@/lib/progress";
 import { Check } from "./icons";
 
 /** A metro-style map: each stage is a line, each lesson a station on it. */
-export default function RoadmapMap() {
+export default function RoadmapMap({ stages = roadmapStages, certBase = "/certificate/", unit = "المرحلة" }: { stages?: Stage[]; certBase?: string; unit?: string } = {}) {
   const { progress } = useProgress();
   const done = new Set(progress.completed);
   const nextSlug = stages.flatMap((s) => s.lessons).find((l) => PUBLISHED_LESSONS.has(l.slug) && !done.has(l.slug))?.slug;
@@ -90,10 +90,10 @@ export default function RoadmapMap() {
             <div className="mt-3 flex flex-wrap gap-2">
               {st.project &&
                 (() => {
-                  const p = STAGE_PROJECTS[st.id];
+                  const p = STAGE_PROJECTS[st.key ?? String(st.id)];
                   const inner = (
                     <>
-                      <span style={{ color: st.color }}>◆</span> مشروع المرحلة: {p ? p.title : st.project}
+                      <span style={{ color: st.color }}>◆</span> مشروع {unit}: {p ? p.title : st.project}
                       {p && done.has(projectKey(p.slug)) && <Check className="h-4 w-4 text-ok" />}
                       {!p && <span className="text-[10px] text-muted">قريباً</span>}
                     </>
@@ -107,8 +107,8 @@ export default function RoadmapMap() {
                   );
                 })()}
               {stageComplete(st, progress.completed) && (
-                <Link href={`/certificate/${st.id}`} className="inline-flex items-center gap-2 rounded-lg bg-accent px-3 py-1.5 text-sm font-semibold text-accent-fg">
-                  🎓 شهادة المرحلة
+                <Link href={certBase + st.id} className="inline-flex items-center gap-2 rounded-lg bg-accent px-3 py-1.5 text-sm font-semibold text-accent-fg">
+                  🎓 شهادة {unit}
                 </Link>
               )}
             </div>

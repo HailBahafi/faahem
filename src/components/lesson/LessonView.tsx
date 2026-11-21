@@ -3,7 +3,8 @@
 import Link from "next/link";
 import { motion } from "motion/react";
 import { useEffect, useState } from "react";
-import { lessonTitle } from "@/content/roadmap";
+import { findStage, lessonTitle } from "@/content/roadmap";
+import { findTrackLevel, LEVEL_NAMES } from "@/content/tracks";
 import { useLang, useProgress } from "@/lib/progress";
 import { nextDue } from "@/lib/review";
 import { sceneLangs, type Lesson } from "@/lib/types";
@@ -77,13 +78,14 @@ export default function LessonView({ lesson }: { lesson: Lesson }) {
   }
 
   const station = STATIONS[s];
+  const home = lessonHome(lesson.slug, lesson.stage);
 
   return (
     <main className="mx-auto max-w-6xl px-4 pb-24 pt-6">
       <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
         <div>
-          <Link href="/roadmap" className="text-sm text-muted hover:text-accent">
-            المرحلة {lesson.stage} · الدرس {lesson.number}
+          <Link href={home.href} className="text-sm text-muted hover:text-accent">
+            {home.label} · الدرس {lesson.number}
           </Link>
           <h1 className="mt-1 text-3xl font-bold md:text-4xl">{lesson.title}</h1>
           <p className="mt-1 text-muted">{lesson.subtitle} · {lesson.minutes} دقيقة</p>
@@ -205,11 +207,11 @@ export default function LessonView({ lesson }: { lesson: Lesson }) {
               <Quiz items={lesson.quiz} onFinish={finishQuiz} />
               {completed && (
                 <div className="mt-6 flex flex-wrap justify-center gap-3">
-                  <Link href="/roadmap" className="rounded-xl border border-line px-5 py-2.5 font-semibold">
-                    خارطة الطريق
+                  <Link href={home.href} className="rounded-xl border border-line px-5 py-2.5 font-semibold">
+                    {home.back}
                   </Link>
                   {lesson.next && (
-                    <Link href={PUBLISHED_LESSONS.has(lesson.next) ? `/learn/${lesson.next}` : "/roadmap"} className="rounded-xl bg-accent px-5 py-2.5 font-semibold text-accent-fg">
+                    <Link href={PUBLISHED_LESSONS.has(lesson.next) ? `/learn/${lesson.next}` : home.href} className="rounded-xl bg-accent px-5 py-2.5 font-semibold text-accent-fg">
                       التالي: {lessonTitle(lesson.next)}
                     </Link>
                   )}
@@ -231,4 +233,12 @@ export default function LessonView({ lesson }: { lesson: Lesson }) {
       </div>
     </main>
   );
+}
+
+/** Where a lesson's breadcrumb and "back" button lead: its roadmap stage, else its language track. */
+function lessonHome(slug: string, stage: number) {
+  if (findStage(slug)) return { href: "/roadmap", label: `المرحلة ${stage}`, back: "خارطة الطريق" };
+  const tl = findTrackLevel(slug);
+  if (!tl) return { href: "/tracks", label: "المسارات", back: "المسارات" };
+  return { href: `/tracks/${tl.track.id}`, label: `مسار ${tl.track.name} · ${LEVEL_NAMES[tl.level.id]}`, back: `مسار ${tl.track.name}` };
 }

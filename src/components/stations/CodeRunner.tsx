@@ -15,6 +15,9 @@ const LABEL: Record<RunLang, string> = {
   py: "Python يعمل في متصفحك",
   html: "الصفحة تُعرض مباشرة",
   sql: "قاعدة بيانات Postgres تعمل في متصفحك",
+  go: "Go يُترجم ويعمل على خادم التشغيل",
+  rust: "Rust يُترجم ويعمل على خادم التشغيل",
+  dart: "Dart يعمل على خادم التشغيل",
 };
 
 /** Editable code with Run (and "watch it run" for JS/TS/Python); HTML gets a live preview. */
@@ -67,7 +70,7 @@ export default function CodeRunner({ starter, lang = "js", setup }: { starter: s
       )}
       {traced !== null && (
         <div className="border-t border-white/10 bg-bg p-4 text-fg">
-          <TracePlayer code={traced} lang={lang === "sql" ? "js" : lang} />
+          <TracePlayer code={traced} lang={lang === "ts" || lang === "py" ? lang : "js"} />
         </div>
       )}
     </div>

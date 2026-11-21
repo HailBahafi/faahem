@@ -722,6 +722,8 @@ class Interp {
   }
 
   method(obj: Val, m: string, a: Val[]): Val {
+    // What JavaScript itself throws for x.m() when x is null/undefined.
+    if (obj === null || obj === undefined) throw new JsError("TypeError", `Cannot read properties of ${obj} (reading '${m}')`);
     if (typeof obj === "string") {
       switch (m) {
         case "toUpperCase": return obj.toUpperCase();

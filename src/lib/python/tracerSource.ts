@@ -38,7 +38,7 @@ def __faahem_trace(src):
     out = io.StringIO()
     ids = {}
     src_lines = src.split("\n")
-    state = {"pending": None, "stack": [], "prev": {}}
+    state = {"pending": None, "stack": [], "prev": {}, "raising": {}}
 
     def ref_id(o):
         k = id(o)
@@ -165,17 +165,25 @@ def __faahem_trace(src):
                 snapshot(f, f.f_code.co_firstlineno, f"استدعاء {f.f_code.co_name}({args}) ← إطار جديد فوق المكدّس")
             return tracer
         if event == "line":
+            state["raising"].pop(id(f), None)
             if state["pending"] is not None:
                 pf, pl = state["pending"]
                 snapshot(f, pl, describe(f, pl))
             state["pending"] = (f, f.f_lineno)
+        elif event == "exception":
+            # The frame may still catch it; a later "line" event in this frame clears the mark.
+            state["raising"][id(f)] = arg[0].__name__
         elif event == "return":
             if state["pending"] is not None:
                 pf, pl = state["pending"]
                 snapshot(f, pl, describe(f, pl))
                 state["pending"] = None
+            raised = state["raising"].pop(id(f), None)
             if f.f_code.co_name != "<module>":
-                snapshot(f, f.f_lineno, f"{f.f_code.co_name} تُرجع {slot('r', arg)['value'] or 'قائمة/كائن'} ويُزال إطارها")
+                if raised:
+                    snapshot(f, f.f_lineno, f"{f.f_code.co_name} توقفت بخطأ {raised} ولم تُرجع شيئاً ← يُزال إطارها والخطأ يصعد إلى من استدعاها")
+                else:
+                    snapshot(f, f.f_lineno, f"{f.f_code.co_name} تُرجع {slot('r', arg)['value'] or 'قائمة/كائن'} ويُزال إطارها")
                 state["pending"] = state["stack"].pop() if state["stack"] else None
         return tracer
 

@@ -12,6 +12,7 @@ const STEPS = [
 ];
 
 const LANGS = ["JavaScript", "TypeScript", "Python", "Go", "Dart", "Rust"];
+const TRACK_IDS = ["js", "ts", "py", "go", "dart", "rust"];
 
 export default function Home() {
   return (
@@ -58,13 +59,15 @@ export default function Home() {
       </section>
 
       <section className="mx-auto max-w-6xl px-4 py-16">
-        <h2 className="text-2xl font-bold md:text-3xl">مفهوم واحد، ست لغات</h2>
+        <h2 className="text-2xl font-bold md:text-3xl">مسار كامل لكل لغة</h2>
         <p className="mt-2 max-w-2xl leading-8 text-muted">
-          تتعلّم الفكرة مرة واحدة، ثم ترى كيف تكتبها كل لغة. هكذا تفهم البرمجة نفسها، لا لغة واحدة فقط.
+          اختر لغتك وامشِ فيها من الأساسيات إلى الاحتراف: أربعة مستويات، لكل مستوى مشروع وشهادة.
         </p>
         <div className="mt-6 flex flex-wrap gap-2" dir="ltr">
-          {LANGS.map((l) => (
-            <span key={l} className="code rounded-xl border border-line bg-surface px-4 py-2 text-sm">{l}</span>
+          {LANGS.map((l, k) => (
+            <Link key={l} href={`/tracks/${TRACK_IDS[k]}`} className="code rounded-xl border border-line bg-surface px-4 py-2 text-sm hover:border-accent">
+              {l}
+            </Link>
           ))}
         </div>
       </section>

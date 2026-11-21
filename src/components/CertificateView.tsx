@@ -12,7 +12,7 @@ import { projectKey } from "./ProjectView";
 /** What a stage requires: its published lessons, plus its project when one exists. */
 export function stageRequirements(stage: Stage) {
   const lessonSlugs = stage.lessons.map((l) => l.slug).filter((s) => PUBLISHED_LESSONS.has(s));
-  const project = STAGE_PROJECTS[stage.id];
+  const project = STAGE_PROJECTS[stage.key ?? String(stage.id)];
   return { lessonSlugs, project };
 }
 
@@ -22,7 +22,8 @@ export function stageComplete(stage: Stage, completed: string[]) {
   return lessonSlugs.every((s) => completed.includes(s)) && (!project || completed.includes(projectKey(project.slug)));
 }
 
-export default function CertificateView({ stage }: { stage: Stage }) {
+/** `what` names the achievement ("المرحلة 3 «الأدوات»"); `footer` replaces "المرحلة 3 من 12". */
+export default function CertificateView({ stage, what, footer }: { stage: Stage; what?: string; footer?: string }) {
   const { progress } = useProgress();
   const account = useAccount();
   const [name, setName] = useState("");
@@ -80,14 +81,14 @@ export default function CertificateView({ stage }: { stage: Stage }) {
         <p className="mt-8 text-sm tracking-[0.3em] text-[#64748b]">شهادة إتمام</p>
         <h2 className="mt-4 text-4xl font-bold md:text-5xl">{name || "اسمك هنا"}</h2>
         <p className="mx-auto mt-6 max-w-xl text-lg leading-9 text-[#334155]">
-          أتمّ المرحلة {stage.id} «{stage.title}» في منصة فاهم: {lessonSlugs.length} درساً، شاهد كل مفهوم يتحرك داخل الجهاز، وطبّقه، واجتاز اختبار الفهم في كل درس
+          أتمّ {what ?? `المرحلة ${stage.id} «${stage.title}»`} في منصة فاهم: {lessonSlugs.length} درساً، شاهد كل مفهوم يتحرك داخل الجهاز، وطبّقه، واجتاز اختبار الفهم في كل درس
           {project ? `، وأنجز مشروع «${project.title}»` : ""}.
         </p>
         <p className="mt-2 text-[#64748b]">{stage.goal}</p>
         <div className="mx-auto mt-10 flex max-w-md items-center justify-between border-t border-[#e2e8f0] pt-4 text-sm text-[#64748b]">
           <span>{date}</span>
           <span className="font-semibold" style={{ color: stage.color }}>
-            المرحلة {stage.id} من 12
+            {footer ?? `المرحلة ${stage.id} من 12`}
           </span>
         </div>
       </article>

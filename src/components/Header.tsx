@@ -26,6 +26,9 @@ export default function Header() {
           <Link href="/roadmap" className="rounded-lg px-3 py-2 text-muted hover:bg-surface-2 hover:text-fg">
             خارطة الطريق
           </Link>
+          <Link href="/tracks" className="rounded-lg px-3 py-2 text-muted hover:bg-surface-2 hover:text-fg">
+            المسارات
+          </Link>
           <Link href="/visualize" className="hidden rounded-lg px-3 py-2 text-muted hover:bg-surface-2 hover:text-fg sm:block">
             المتتبّع
           </Link>

@@ -2,7 +2,10 @@
 export type Lang = "js" | "ts" | "py" | "go" | "dart" | "rust" | "html" | "css" | "sql" | "shell" | "text";
 
 /** Languages the browser can run and check: JavaScript, TypeScript, Python (Pyodide) and HTML/CSS. */
-export type RunLang = "js" | "ts" | "py" | "html" | "sql";
+/** go, rust and dart run on the run server (`/api/run`); the rest run in the browser. */
+export type RunLang = "js" | "ts" | "py" | "html" | "sql" | "go" | "rust" | "dart";
+export const NATIVE_LANGS = ["go", "rust", "dart"] as const;
+export const isNative = (l: string): l is "go" | "rust" | "dart" => (NATIVE_LANGS as readonly string[]).includes(l);
 
 export const LANGS: { id: Lang; label: string }[] = [
   { id: "js", label: "JavaScript" },
@@ -101,6 +104,8 @@ export interface PredictQ {
  * - html: render the page in a sandboxed frame, evaluate the JS expression `check` inside it
  *   (`__logs` holds console.log lines), compare String(result) with `expected`.
  * - text: nothing runs (shell, git, SQL concepts...): `order` must match `lines`, `fill` must pick `answer`.
+ * - go / rust / dart: run on the run server like js. `fill` must also give `answer`, so the exercise
+ *   can still be checked when the run server is off.
  */
 export interface ExerciseCheck {
   lang?: RunLang | "text";
@@ -167,6 +172,9 @@ export interface ProjectTest {
 export interface Project {
   slug: string;
   stage: number;
+  /** A language track's level project (e.g. track "py", level 2) instead of a roadmap stage's. */
+  track?: string;
+  level?: number;
   title: string;
   brief: string;
   lang: RunLang | "text";

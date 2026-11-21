@@ -18,6 +18,18 @@ async function check(ex: Exercise, code: string, raw: { order?: string[]; pick?:
     return { ok, got: "", err: ok ? null : raw.order ? "الترتيب غير صحيح بعد." : "ليس هذا الخيار. فكّر في ما يحدث فعلاً." };
   }
   const r = await runCode(lang, code, ex.check, ex.setup);
+  if (r.error?.name === "Unavailable") {
+    // No run server yet (Go, Rust, Dart): order and fill can still be checked against their answer.
+    if (raw.order) {
+      const ok = raw.order.join("\n") === (ex as { lines: string[] }).lines.join("\n");
+      return { ok, got: "", err: ok ? null : "الترتيب غير صحيح بعد." };
+    }
+    if (raw.pick !== undefined && ex.answer !== undefined) {
+      const ok = raw.pick === ex.answer;
+      return { ok, got: "", err: ok ? null : "ليس هذا الخيار. فكّر في ما يحدث فعلاً." };
+    }
+    return { ok: false, got: "", err: `${r.error.message} قارن حلّك بالحل، أو شغّله على جهازك.` };
+  }
   const got = r.out.join("\n").trim();
   return { ok: !r.error && !r.timedOut && got === ex.expected.trim(), got, err: explain(lang, r) };
 }

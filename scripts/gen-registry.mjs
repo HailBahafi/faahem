@@ -6,7 +6,7 @@ import { readdirSync, readFileSync, writeFileSync } from "node:fs";
 const LESSONS = "src/content/lessons";
 const PROBLEMS = "src/components/problems";
 
-const order = [...readFileSync("src/content/roadmap.ts", "utf8").matchAll(/L\("([^"]+)"/g)].map((m) => m[1]);
+const order = ["src/content/roadmap.ts", "src/content/tracks.ts"].flatMap((f) => [...readFileSync(f, "utf8").matchAll(/L\("([^"]+)"/g)].map((m) => m[1]));
 const problemFiles = readdirSync(PROBLEMS).filter((f) => f.endsWith("Problem.tsx")).map((f) => f.replace(".tsx", ""));
 const byKey = new Map(problemFiles.map((n) => [n.replace(/Problem$/, "").toLowerCase(), n]));
 
@@ -85,8 +85,9 @@ export const projectOfStage = (stage: number) => Object.values(projects).find((p
 const stageProjects = {};
 for (const p of projects) {
   const src = readFileSync(`${PROJECTS}/${p.file}.ts`, "utf8");
-  const stage = Number(src.match(/stage:\s*(\d+)/)?.[1]);
-  stageProjects[stage] = { slug: src.match(/slug:\s*"([^"]+)"/)?.[1], title: src.match(/title:\s*"([^"]+)"/)?.[1] };
+  const track = src.match(/track:\s*"([^"]+)"/)?.[1];
+  const key = track ? `${track}:${src.match(/level:\s*(\d+)/)?.[1]}` : src.match(/stage:\s*(\d+)/)?.[1];
+  stageProjects[key] = { slug: src.match(/slug:\s*"([^"]+)"/)?.[1], title: src.match(/title:\s*"([^"]+)"/)?.[1] };
 }
 writeFileSync(
   "src/content/published.ts",
@@ -94,8 +95,8 @@ writeFileSync(
 /** Slugs of every published lesson. */
 export const PUBLISHED_LESSONS = new Set<string>(${JSON.stringify(lessons.map((l) => l.slug))});
 
-/** Each stage's project, by stage number. */
-export const STAGE_PROJECTS: Record<number, { slug: string; title: string }> = ${JSON.stringify(stageProjects, null, 2)};
+/** Each stage's project, by stage number, and each track level's, by "track:level". */
+export const STAGE_PROJECTS: Record<string, { slug: string; title: string }> = ${JSON.stringify(stageProjects, null, 2)};
 `,
 );
 

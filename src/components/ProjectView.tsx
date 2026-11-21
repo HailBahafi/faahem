@@ -4,6 +4,7 @@ import Link from "next/link";
 import { motion } from "motion/react";
 import { useState } from "react";
 import { stages } from "@/content/roadmap";
+import { LEVEL_NAMES, trackById } from "@/content/tracks";
 import { useProgress } from "@/lib/progress";
 import { runProjectTests, type TestResult } from "@/lib/projectTests";
 import type { Project } from "@/lib/types";
@@ -20,6 +21,7 @@ export default function ProjectView({ project }: { project: Project }) {
   const [busy, setBusy] = useState(false);
   const [ticked, setTicked] = useState<boolean[]>(project.steps.map(() => false));
   const stage = stages.find((s) => s.id === project.stage);
+  const track = project.track ? trackById(project.track) : undefined;
   const done = progress.completed.includes(projectKey(project.slug));
 
   const markDone = () =>
@@ -38,9 +40,15 @@ export default function ProjectView({ project }: { project: Project }) {
 
   return (
     <main className="mx-auto max-w-6xl px-4 pb-24 pt-8">
-      <Link href="/roadmap" className="text-sm text-muted hover:text-accent">
-        مشروع المرحلة {project.stage} · {stage?.title}
-      </Link>
+      {track ? (
+        <Link href={`/tracks/${track.id}`} className="text-sm text-muted hover:text-accent">
+          مشروع مسار {track.name} · {LEVEL_NAMES[project.level ?? 1]}
+        </Link>
+      ) : (
+        <Link href="/roadmap" className="text-sm text-muted hover:text-accent">
+          مشروع المرحلة {project.stage} · {stage?.title}
+        </Link>
+      )}
       <div className="mt-1 flex flex-wrap items-center justify-between gap-3">
         <h1 className="text-3xl font-bold md:text-4xl">{project.title}</h1>
         {done && (

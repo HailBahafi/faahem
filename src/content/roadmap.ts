@@ -1,3 +1,5 @@
+import { tracks } from "./tracks";
+
 export interface RoadmapLesson {
   slug: string;
   title: string;
@@ -11,6 +13,8 @@ export interface Stage {
   langs: string;
   project?: string;
   lessons: RoadmapLesson[];
+  /** Key of this stage's project in STAGE_PROJECTS (default: the stage id). Track levels use "py:2". */
+  key?: string;
 }
 
 const L = (slug: string, title: string): RoadmapLesson => ({ slug, title });
@@ -36,6 +40,6 @@ export function findStage(slug: string) {
 }
 
 export function lessonTitle(slug: string) {
-  for (const s of stages) for (const l of s.lessons) if (l.slug === slug) return l.title;
+  for (const s of [...stages, ...tracks.flatMap((t) => t.levels)]) for (const l of s.lessons) if (l.slug === slug) return l.title;
   return slug;
 }
